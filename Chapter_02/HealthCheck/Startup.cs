@@ -1,3 +1,4 @@
+using HealthCheck.Settings.StaticFiles;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -16,6 +17,7 @@ namespace HealthCheck
         }
 
         public IConfiguration Configuration { get; }
+        public Models.StaticFiles.Headers Headers { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -26,6 +28,11 @@ namespace HealthCheck
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddStaticFilesHeader(Configuration);
+
+            var provider = services.BuildServiceProvider();
+            Headers = provider.GetService<Models.StaticFiles.Headers>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,7 +50,17 @@ namespace HealthCheck
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse = (context) =>
+                {
+                    // Disable caching for all static files.
+                    // Retrieve cache configuration from appsettings.json
+                    context.Context.Response.Headers["Cache-Control"] = Headers.Cache_Control;
+                    context.Context.Response.Headers["Pragma"] = Headers.Pragma;
+                    context.Context.Response.Headers["Expires"] = Headers.Expires;
+                }
+            });
             if (!env.IsDevelopment())
             {
                 app.UseSpaStaticFiles();
