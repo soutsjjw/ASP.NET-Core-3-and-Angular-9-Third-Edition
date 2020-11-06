@@ -29,6 +29,8 @@ namespace HealthCheck
                 configuration.RootPath = "ClientApp/dist";
             });
 
+            services.AddHealthChecks();
+
             services.AddStaticFilesHeader(Configuration);
 
             var provider = services.BuildServiceProvider();
@@ -67,6 +69,8 @@ namespace HealthCheck
             }
 
             app.UseRouting();
+
+            app.UseHealthChecks("/hc");
 
             app.UseEndpoints(endpoints =>
             {
