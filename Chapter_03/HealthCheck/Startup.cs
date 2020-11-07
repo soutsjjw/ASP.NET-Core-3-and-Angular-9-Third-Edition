@@ -33,6 +33,12 @@ namespace HealthCheck
 
             services.AddStaticFilesHeader(Configuration);
 
+            services.AddHealthChecks()
+                .AddCheck("ICMP_01", new ICMPHealthCheck("www.ryadel.com", 100))
+                .AddCheck("ICMP_02", new ICMPHealthCheck("www.google.com", 100))
+                .AddCheck("ICMP_03", new ICMPHealthCheck("www.does-not-exist.com", 100))
+                ;
+
             var provider = services.BuildServiceProvider();
             Headers = provider.GetService<Models.StaticFiles.Headers>();
         }
@@ -70,7 +76,7 @@ namespace HealthCheck
 
             app.UseRouting();
 
-            app.UseHealthChecks("/hc");
+            app.UseHealthChecks("/hc", new CustomHealthCheckOptions());
 
             app.UseEndpoints(endpoints =>
             {
