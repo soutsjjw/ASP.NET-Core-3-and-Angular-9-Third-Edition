@@ -1,5 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+
 import { City } from './city';
 
 @Component({
@@ -8,6 +11,7 @@ import { City } from './city';
   styleUrls: ['./cities.component.css']
 })
 export class CitiesComponent implements OnInit {
+  public displayedColumns: string[] = [ 'id', 'name', 'lat', 'lon'];
   public cities: City[];
 
   constructor(
