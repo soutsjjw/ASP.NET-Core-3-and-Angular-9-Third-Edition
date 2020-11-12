@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -11,6 +11,7 @@ import { CitiesComponent } from './cities/cities.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularMaterialModule } from './angular-material.module';
 import { CountriesComponent } from './countries/countries.component';
+import { CityEditComponent } from './cities/city-edit.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { CountriesComponent } from './countries/countries.component';
     NavMenuComponent,
     HomeComponent,
     CitiesComponent,
-    CountriesComponent
+    CityEditComponent,
+    CountriesComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -26,7 +28,8 @@ import { CountriesComponent } from './countries/countries.component';
     FormsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    AngularMaterialModule
+    AngularMaterialModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
