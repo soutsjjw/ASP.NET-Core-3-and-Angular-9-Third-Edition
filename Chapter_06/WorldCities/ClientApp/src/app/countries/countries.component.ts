@@ -12,7 +12,7 @@ import { Country } from './country';
 })
 export class CountriesComponent implements OnInit {
   public displayedColumns: string[] = [ 'id', 'name', 'iso2', 'iso3'];
-  public counties: MatTableDataSource<Country>;
+  public countries: MatTableDataSource<Country>;
 
   defaultPageIndex: number = 0;
   defaultPageSize: number = 10;
@@ -62,7 +62,10 @@ export class CountriesComponent implements OnInit {
         this.paginator.length = result.totalCount;
         this.paginator.pageIndex = result.pageIndex;
         this.paginator.pageSize = result.pageSize;
-        this.counties = new MatTableDataSource<Country>(result.data);
+        this.countries = new MatTableDataSource<Country>(result.data);
+
+        console.log(result.data);
+
       }, error => console.error(error));
   }
 

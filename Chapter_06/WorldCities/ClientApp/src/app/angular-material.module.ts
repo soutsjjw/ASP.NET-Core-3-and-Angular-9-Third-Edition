@@ -5,6 +5,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from "@angular/material/select";
 
 @NgModule({
   imports: [
@@ -13,7 +14,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatSortModule,
     MatInputModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatSelectModule
   ],
   exports: [
     MatTableModule,
@@ -21,7 +23,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatSortModule,
     MatInputModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatSelectModule
   ]
 })
 

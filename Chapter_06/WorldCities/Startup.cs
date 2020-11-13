@@ -23,14 +23,16 @@ namespace WorldCities
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews()
+                .AddNewtonsoftJson()
                 .AddJsonOptions(options =>
                 {
                     // set this options tu TRUE to indent the JSON output
                     options.JsonSerializerOptions.WriteIndented = true;
-                    // set this option to NULL to use PascalCase instead of camelCase (default)
-                    // options.JsonSerializerOptions.PropertyNamingPolicy = null;
-                });
 
+                    // set this option to NULL to use PascalCase instead of camelCase (default)
+                    //options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                })
+                ;
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

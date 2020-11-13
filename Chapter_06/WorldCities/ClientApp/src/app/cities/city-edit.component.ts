@@ -1,8 +1,12 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { City } from '../cities/city';
+import { Country } from '../countries/country';
 
 @Component({
   selector: 'app-city-edit',
@@ -25,6 +29,9 @@ export class CityEditComponent implements OnInit {
   // and not NULL when we're editing an existing one.
   id?: number;
 
+  // the countries array for the select
+  countries: Country[];
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -34,15 +41,20 @@ export class CityEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = new FormGroup({
-      name: new FormControl(''),
-      lat: new FormControl(''),
-      lon: new FormControl('')
-    });
+      name: new FormControl('', Validators.required),
+      lat: new FormControl('', Validators.required),
+      lon: new FormControl('', Validators.required),
+      countryId: new FormControl('', Validators.required)
+    }, null, this.isDupeCity());
 
     this.loadData();
   }
 
   loadData() {
+
+    // load countries
+    this.loadCountries();
+
     // retrieve the ID form the 'id' parameter
     this.id = +this.activatedRoute.snapshot.paramMap.get('id');
     if (this.id) {
@@ -63,12 +75,25 @@ export class CityEditComponent implements OnInit {
     }
   }
 
+  loadCountries() {
+    // fetch all the countries from the server
+    var url = this.baseUrl + "api/countries";
+    var params = new HttpParams()
+      .set("pageSize", "9999")
+      .set("sortColumn", "name");
+
+    this.http.get<any>(url, { params }).subscribe(result => {
+      this.countries = result.data;
+    }, error => console.error(error));
+  }
+
   onSubmit() {
     var city = (this.id) ? this.city : <City>{};
 
     city.name = this.form.get("name").value;
-    city.lat = this.form.get("lat").value;
-    city.lon = this.form.get("lon").value;
+    city.lat = +this.form.get("lat").value;
+    city.lon = +this.form.get("lon").value;
+    city.countryId = +this.form.get("countryId").value;
 
     if (this.id) {
       // EDIT mode
@@ -90,6 +115,22 @@ export class CityEditComponent implements OnInit {
         //go back to cities view
         this.router.navigate(['/cities']);
       }, error => console.log(error));
+    }
+  }
+
+  isDupeCity(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<{ [key: string]: any } | null> => {
+      var city = <City>{};
+      city.id = (this.id) ? this.id : 0;
+      city.name = this.form.get("name").value;
+      city.lat = +this.form.get("lat").value;
+      city.lon = +this.form.get("lon").value;
+      city.countryId = +this.form.get("countryId").value;
+
+      var url = this.baseUrl + "api/cities/IsDupeCity";
+      return this.http.post<boolean>(url, city).pipe(map(result => {
+        return (result ? { isDupeCity: true } : null);
+      }));
     }
   }
 
