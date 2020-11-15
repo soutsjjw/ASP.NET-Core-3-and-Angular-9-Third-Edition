@@ -1,24 +1,45 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+//import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, ControlContainer, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { BaseFormComponent } from '../base.form.component';
 
 import { Country } from '../countries/country';
+import { CountryService } from './country.service';
 
 @Component({
   selector: 'app-country-edit',
   templateUrl: './country-edit.component.html',
   styleUrls: ['./country-edit.component.css']
 })
-export class CountryEditComponent implements OnInit {
+export class CountryEditComponent extends BaseFormComponent implements OnInit {
 
   // this view title
   title: string;
 
   // the form model
-  form: FormGroup;
+  form = this.fb.group({
+    name: ['',
+      Validators.required,
+      this.isDupeField("name")
+    ],
+    iso2: ['',
+      [
+        Validators.required,
+        Validators.pattern('[a-zA-Z]{2}')
+      ],
+      this.isDupeField("iso2")
+    ],
+    iso3: ['',
+      [
+        Validators.required,
+        Validators.pattern('[a-zA-Z]{3}')
+      ],
+      this.isDupeField("iso3")
+    ]
+  });
 
   // the country object to edit or create
   country: Country;
@@ -32,32 +53,10 @@ export class CountryEditComponent implements OnInit {
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string
-  ) { }
+    private countryService: CountryService
+  ) { super(); }
 
   ngOnInit(): void {
-    this.form = this.fb.group({
-      name: ['',
-        Validators.required,
-        this.isDupeField("name")
-      ],
-      iso2: ['',
-        [
-          Validators.required,
-          Validators.pattern('[a-zA-Z]{2}')
-        ],
-        this.isDupeField("iso2")
-      ],
-      iso3: ['',
-        [
-          Validators.required,
-          Validators.pattern('[a-zA-Z]{3}')
-        ],
-        this.isDupeField("iso3")
-      ]
-    });
-
     this.loadData();
   }
 
@@ -69,8 +68,7 @@ export class CountryEditComponent implements OnInit {
       // EDIT MODE 
 
       // fetch the country form the server
-      var url = this.baseUrl + "api/countries/" + this.id;
-      this.http.get<Country>(url).subscribe(result => {
+      this.countryService.get<Country>(this.id).subscribe(result => {
         this.country = result;
         this.title = "Edit - " + this.country.name;
 
@@ -93,8 +91,7 @@ export class CountryEditComponent implements OnInit {
     if (this.id) {
       // EDIT mode
 
-      var url = this.baseUrl + "api/countries/" + this.country.id;
-      this.http.put<Country>(url, country).subscribe(result => {
+      this.countryService.put<Country>(country).subscribe(result => {
         console.log("Country " + country.id + " has been updated.");
 
         // go back to countries view
@@ -102,8 +99,7 @@ export class CountryEditComponent implements OnInit {
       }, error => console.log(error));
     } else {
       // ADD NEW mode
-      var url = this.baseUrl + "api/countries";
-      this.http.post<Country>(url, country).subscribe(result => {
+      this.countryService.post<Country>(country).subscribe(result => {
         
         console.log("Country " + result.id + " has been created.");
 
@@ -115,12 +111,12 @@ export class CountryEditComponent implements OnInit {
 
   isDupeField(fieldName: string): AsyncValidatorFn {
     return (control: AbstractControl): Observable<{ [key: string]: any } | null> => {
-      var params = new HttpParams()
-        .set("countryId", (this.id) ? this.id.toString() : "0")
-        .set("fieldName", fieldName)
-        .set("fieldValue", control.value);
-      var url = this.baseUrl + "api/countries/IsDupeField";
-      return this.http.post<boolean>(url, null, { params })
+      var countryId = (this.id) ? this.id.toString() : "0";
+
+      return this.countryService.isDupeField(
+        countryId,
+        fieldName,
+        control.value)
         .pipe(map(result => {
           return (result ? { isDupeField: true } : null);
         }));

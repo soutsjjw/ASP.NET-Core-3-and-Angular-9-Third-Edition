@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -41,11 +42,34 @@ namespace WorldCities.Data.Models
 
         #endregion
 
+        #region Client-side properties
+
+        /// <summary>
+        /// The number of cities related to this country.
+        /// </summary>
+        [NotMapped]
+        public int TotCities
+        {
+            get
+            {
+                return (Cities != null) ? Cities.Count : _TotCities;
+            }
+            set
+            {
+                _TotCities = value;
+            }
+        }
+
+        private int _TotCities = 0;
+
+        #endregion
+
         #region Navigation Properties
 
         /// <summary>
         /// A list containing all the cities related to this country.
         /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
         public virtual List<City> Cities { get; set; }
 
         #endregion

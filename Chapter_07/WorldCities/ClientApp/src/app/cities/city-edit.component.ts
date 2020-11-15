@@ -4,16 +4,19 @@ import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup, Validators }
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { BaseFormComponent } from '../base.form.component';
 
 import { City } from '../cities/city';
 import { Country } from '../countries/country';
+import { CityService } from './city.service';
+import { ApiResult } from '../base.service';
 
 @Component({
   selector: 'app-city-edit',
   templateUrl: './city-edit.component.html',
   styleUrls: ['./city-edit.component.css']
 })
-export class CityEditComponent implements OnInit {
+export class CityEditComponent extends BaseFormComponent implements OnInit {
 
   // this view title
   title: string;
@@ -35,15 +38,20 @@ export class CityEditComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string
-  ) { }
+    private cityService: CityService
+  ) { super(); }
 
   ngOnInit(): void {
     this.form = new FormGroup({
       name: new FormControl('', Validators.required),
-      lat: new FormControl('', Validators.required),
-      lon: new FormControl('', Validators.required),
+      lat: new FormControl('', [
+        Validators.required,
+        Validators.pattern('^[-]?[0-9]+(\.[0-9]{1,4})?$')
+      ]),
+      lon: new FormControl('', [
+        Validators.required,
+        Validators.pattern('^[-]?[0-9]+(\.[0-9]{1,4})?$')
+      ]),
       countryId: new FormControl('', Validators.required)
     }, null, this.isDupeCity());
 
@@ -61,14 +69,13 @@ export class CityEditComponent implements OnInit {
       // EDIT MODE 
 
       // fetch the city form the server
-      var url = this.baseUrl + "api/cities/" + this.id;
-      this.http.get<City>(url).subscribe(result => {
+      this.cityService.get<City>(this.id).subscribe(result => {
         this.city = result;
         this.title = "Edit - " + this.city.name;
 
         // update the form with the city value
         this.form.patchValue(this.city);
-      }, error => console.error(error));
+      }, error => console.log(error));
     } else {
       // ADD NEW MODE
       this.title = "Create a new City";
@@ -77,14 +84,11 @@ export class CityEditComponent implements OnInit {
 
   loadCountries() {
     // fetch all the countries from the server
-    var url = this.baseUrl + "api/countries";
-    var params = new HttpParams()
-      .set("pageSize", "9999")
-      .set("sortColumn", "name");
-
-    this.http.get<any>(url, { params }).subscribe(result => {
+    this.cityService.getCountries<ApiResult<Country>>(
+      0, 9999, "name", null, null, null
+    ).subscribe(result => {
       this.countries = result.data;
-    }, error => console.error(error));
+    }, error => console.log(error));
   }
 
   onSubmit() {
@@ -98,8 +102,7 @@ export class CityEditComponent implements OnInit {
     if (this.id) {
       // EDIT mode
 
-      var url = this.baseUrl + "api/cities/" + this.city.id;
-      this.http.put<City>(url, city).subscribe(result => {
+      this.cityService.put<City>(city).subscribe(result => {
         console.log("City " + city.id + " has been updated.");
 
         // go back to cities view
@@ -107,9 +110,8 @@ export class CityEditComponent implements OnInit {
       }, error => console.log(error));
     } else {
       // ADD NEW mode
-      var url = this.baseUrl + "api/cities";
-      this.http.post<City>(url, city).subscribe(result => {
-        
+      this.cityService.post<City>(city).subscribe(result => {
+
         console.log("City " + result.id + " has been created.");
 
         //go back to cities view
@@ -127,11 +129,10 @@ export class CityEditComponent implements OnInit {
       city.lon = +this.form.get("lon").value;
       city.countryId = +this.form.get("countryId").value;
 
-      var url = this.baseUrl + "api/cities/IsDupeCity";
-      return this.http.post<boolean>(url, city).pipe(map(result => {
-        return (result ? { isDupeCity: true } : null);
-      }));
+      return this.cityService.isDupeCity(city)
+        .pipe(map(result => {
+          return (result ? { isDupeCity: true } : null);
+        }));
     }
   }
-
 }
