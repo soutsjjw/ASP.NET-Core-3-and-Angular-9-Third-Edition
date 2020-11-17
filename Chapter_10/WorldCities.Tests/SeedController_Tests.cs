@@ -46,26 +46,12 @@ namespace WorldCities.Tests
             using (var context = new ApplicationDbContext(options, storeOptions))
             {
                 // create a RoleManager instance
-                var roleStore = new RoleStore<IdentityRole>(context);
-                var roleManager = new RoleManager<IdentityRole>(
-                    roleStore,
-                    new IRoleValidator<IdentityRole>[0],
-                    new UpperInvariantLookupNormalizer(),
-                    new Mock<IdentityErrorDescriber>().Object,
-                    new Mock<ILogger<RoleManager<IdentityRole>>>().Object);
+                var roleManager = IdentityHelper.GetRoleManager(
+                    new RoleStore<IdentityRole>(context));
 
                 // create a UserManager instance
-                var userStore = new UserStore<ApplicationUser>(context);
-                var userManager = new UserManager<ApplicationUser>(
-                    userStore,
-                    new Mock<IOptions<IdentityOptions>>().Object,
-                    new Mock<IPasswordHasher<ApplicationUser>>().Object,
-                    new IUserValidator<ApplicationUser>[0],
-                    new IPasswordValidator<ApplicationUser>[0],
-                    new UpperInvariantLookupNormalizer(),
-                    new Mock<IdentityErrorDescriber>().Object,
-                    new Mock<IServiceProvider>().Object,
-                    new Mock<ILogger<UserManager<ApplicationUser>>>().Object);
+                var userManager = IdentityHelper.GetUserManager(
+                    new UserStore<ApplicationUser>(context));
 
                 // create a SeedController instance
                 var controller = new SeedController(

@@ -16,6 +16,11 @@ import { CountryEditComponent } from './countries/country-edit.component';
 import { BaseFormComponent } from './base.form.component';
 import { CityService } from './cities/city.service';
 
+import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.module';
+import { AuthorizeGuard } from 'src/api-authorization/authorize.guard';
+import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
+import { CountryService } from './countries/country.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -31,12 +36,17 @@ import { CityService } from './cities/city.service';
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
+    ApiAuthorizationModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     AngularMaterialModule,
     ReactiveFormsModule
   ],
-  providers: [ CityService ],
+  providers: [
+    CityService,
+    CountryService,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

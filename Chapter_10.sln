@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorldCities", "Chapter_10\W
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorldCities.Tests", "Chapter_10\WorldCities.Tests\WorldCities.Tests.csproj", "{8890C618-34CE-4D02-8329-8F8965545DD5}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthSample", "Chapter_10\AuthSample\AuthSample.csproj", "{68596379-FF8A-4113-8E92-7866B466CDEA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{8890C618-34CE-4D02-8329-8F8965545DD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8890C618-34CE-4D02-8329-8F8965545DD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8890C618-34CE-4D02-8329-8F8965545DD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68596379-FF8A-4113-8E92-7866B466CDEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68596379-FF8A-4113-8E92-7866B466CDEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68596379-FF8A-4113-8E92-7866B466CDEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68596379-FF8A-4113-8E92-7866B466CDEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -30,6 +36,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{3251AADA-2735-4408-8CE9-7144A337B4EA} = {DBE58BEC-C8F2-417E-AE66-1264AB11908A}
 		{8890C618-34CE-4D02-8329-8F8965545DD5} = {DBE58BEC-C8F2-417E-AE66-1264AB11908A}
+		{68596379-FF8A-4113-8E92-7866B466CDEA} = {DBE58BEC-C8F2-417E-AE66-1264AB11908A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F853D6C5-8BF6-4206-B9BD-0BA6D1596034}
