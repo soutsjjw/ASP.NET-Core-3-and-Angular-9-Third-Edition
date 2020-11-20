@@ -3,8 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -22,10 +20,7 @@ import { HealthCheckComponent } from './health-check/health-check.component';
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
-    AppRoutingModule,
-    ServiceWorkerModule.register(
-      'ngsw-worker.js',
-      { registrationStrategy: 'registerImmediately' })
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
