@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
-using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -91,21 +90,10 @@ namespace WorldCities
             }
 
             app.UseHttpsRedirection();
-
-            // add .webmanifest MIME-type support
-            FileExtensionContentTypeProvider provider = new FileExtensionContentTypeProvider();
-            provider.Mappings[".webmanifest"] = "application/manifest+json";
-
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                ContentTypeProvider = provider
-            });
+            app.UseStaticFiles();
             if (!env.IsDevelopment())
             {
-                app.UseSpaStaticFiles(new StaticFileOptions()
-                {
-                    ContentTypeProvider = provider
-                });
+                app.UseSpaStaticFiles();
             }
 
             app.UseRouting();

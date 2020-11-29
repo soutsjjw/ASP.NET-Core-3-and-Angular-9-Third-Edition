@@ -20,8 +20,6 @@ import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.
 import { AuthorizeGuard } from 'src/api-authorization/authorize.guard';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 import { CountryService } from './countries/country.service';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -42,8 +40,7 @@ import { environment } from '../environments/environment';
     AppRoutingModule,
     BrowserAnimationsModule,
     AngularMaterialModule,
-    ReactiveFormsModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+    ReactiveFormsModule
   ],
   providers: [
     CityService,
